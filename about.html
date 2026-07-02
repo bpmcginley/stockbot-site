@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StockTradingLol - About</title><style>
+body{background:#0d1117;color:#c9d1d9;font-family:Segoe UI,Arial,sans-serif;margin:0;padding:0}
+.wrap{max-width:980px;margin:0 auto;padding:20px}
+nav{background:#161b22;border-bottom:1px solid #30363d;padding:12px 20px;display:flex;gap:20px;align-items:center}
+nav b{color:#58a6ff} nav a{color:#8b949e;text-decoration:none;font-size:14px} nav a.on{color:#c9d1d9;font-weight:600}
+h1{font-size:22px;margin:18px 0 6px} h2{font-size:14px;color:#8b949e;font-weight:600;margin:20px 0 10px;text-transform:uppercase;letter-spacing:.05em}
+.sub{color:#8b949e;font-size:12px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px}
+.kpi .v{font-size:21px;font-weight:700}.kpi .l{font-size:11px;color:#8b949e;margin-top:2px}
+.pos{color:#3fb950}.neg{color:#f85149}.warn{color:#d29922}
+.section{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px} td,th{padding:5px 8px;text-align:left;border-bottom:1px solid #21262d} th{color:#8b949e;font-weight:600}
+.tag-core{color:#58a6ff}.tag-etf{color:#d2a8ff}.tag-scraped{color:#d29922}.tag-crypto{color:#f0883e}
+.note{color:#8b949e;font-size:11px;margin-top:8px;line-height:1.6}
+.bar{height:10px;border-radius:5px;display:inline-block;vertical-align:middle}
+input,select{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:6px 8px;font-size:13px;width:110px}
+label{font-size:12px;color:#8b949e;display:block;margin-bottom:3px}
+button{background:#238636;color:#fff;border:0;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
+svg text{fill:#8b949e;font-size:10px}
+p{line-height:1.65;font-size:14px}
+footer{color:#484f58;font-size:11px;padding:20px;text-align:center;line-height:1.6}
+</style></head><body>
+<nav><b>StockTradingLol</b>
+<a href="index.html" class="">Performance</a>
+<a href="montecarlo.html" class="">Projections</a>
+<a href="about.html" class="on">About the bot</a></nav><div class="wrap"><h1>What this bot is</h1>
+<div class='section'><p>
+StockTradingLol is a fully-automated systematic trading bot written in C#. Once per trading day, at noon
+Eastern, it scores a universe of ~2,500 liquid US stocks and a basket of 31 multi-asset ETFs, decides a
+target portfolio, and rebalances a paper (simulated) brokerage account through the Alpaca API.
+No human touches the trades.</p>
+<p>The book runs as <b>independent sleeves</b> that diversify each other:</p>
+<table>
+<tr><th>sleeve</th><th>what it does</th></tr>
+<tr><td class='tag-core'>equity momentum core</td><td>a genetic-algorithm-optimized ensemble of 3 momentum scorers picks ~10-15 liquid stocks with persistent, high-quality trends; rebalances monthly</td></tr>
+<tr><td class='tag-etf'>ETF dual-momentum</td><td>rotates a 31-ETF multi-asset basket (equities, bonds, gold, commodities, inverse indices) by relative + absolute momentum; parks in T-bills when nothing trends</td></tr>
+<tr><td class='tag-crypto'>BTC trend</td><td>a small Bitcoin sleeve (via spot ETF) held only while BTC's own trend is positive, sized down when volatile</td></tr>
+<tr><td class='tag-scraped'>scraped overlay</td><td>a bounded slice for fresh breakout candidates scraped daily from public screeners</td></tr>
+</table>
+<p>Capital is split between sleeves by <b>inverse volatility</b> (risk parity), and several independent risk
+layers - a market-regime filter, a crash-aware de-risker, a volatility target, a drawdown damper and a hard
+circuit breaker - can each pull the book toward cash. Un-deployed capital earns T-bill yield.</p></div>
+
+<h1>How it's validated</h1>
+<div class='section'><p>
+Every change to the strategy has to survive an honest gauntlet before it ships:</p>
+<table>
+<tr><th>check</th><th>what it prevents</th></tr>
+<tr><td>walk-forward out-of-sample testing</td><td>each period is traded by a model optimized ONLY on data before it - no peeking</td></tr>
+<tr><td>multi-seed re-optimization A/B</td><td>a change must beat its control across many optimizer seeds, not in one lucky fit</td></tr>
+<tr><td>deflated Sharpe + block-bootstrap</td><td>corrects for "we tried many things and kept the best" selection bias</td></tr>
+<tr><td>deploy gates (WFE + alpha vs QQQ)</td><td>a new champion is auto-rejected unless it generalizes AND adds skill over beta</td></tr>
+<tr><td>parameter plateau checks</td><td>a config only ships if its neighbors also work - knife-edge settings are luck</td></tr>
+</table>
+<p>Ideas that failed these tests were dropped, and the failures are documented as carefully as the wins:
+leverage (all forms), tighter trailing stops, trend filters, residual momentum, a jump-risk "quality" filter,
+and a tail-put hedge all looked good somewhere and died out-of-sample.</p></div>
+
+<h1>Honest numbers &amp; caveats</h1>
+<div class='section'>
+<table>
+<tr><th>metric (validated, out-of-sample)</th><th>value</th></tr>
+<tr><td>equity book OOS Sharpe (excess, walk-forward 2020-2026)</td><td>~0.72</td></tr>
+<tr><td>blended book (with sleeves + risk-parity split, same window)</td><td>~0.9-1.0</td></tr>
+<tr><td>OOS CAGR (blend, same window)</td><td>~19-20%</td></tr>
+<tr><td>max drawdown (blend, same window)</td><td>~-16%</td></tr>
+</table>
+<p><b>Caveats we measured ourselves:</b> the stock universe is built from today's listings, and we measured
+that this survivorship / membership-hindsight bias inflates backtest Sharpe by roughly 0.35 on an S&amp;P-500
+subset - so the true forward numbers are likely lower than the table above. The account is currently
+a PAPER account: fills are simulated, so live slippage will differ. Returns are volatile,
+drawdowns of 15-20%+ are expected, and none of this is investment advice.</p></div></div><footer>Generated 2026-07-02 18:13 UTC &middot; PAPER trading account (simulated fills, real market data) &middot;
+Nothing on this site is investment advice. Past and simulated performance do not guarantee future results.</footer></body></html>
