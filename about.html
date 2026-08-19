@@ -1,77 +1,142 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>StockTradingLol - About</title><style>
-body{background:#0d1117;color:#c9d1d9;font-family:Segoe UI,Arial,sans-serif;margin:0;padding:0}
-.wrap{max-width:980px;margin:0 auto;padding:20px}
-nav{background:#161b22;border-bottom:1px solid #30363d;padding:12px 20px;display:flex;gap:20px;align-items:center}
-nav b{color:#58a6ff} nav a{color:#8b949e;text-decoration:none;font-size:14px} nav a.on{color:#c9d1d9;font-weight:600}
-h1{font-size:22px;margin:18px 0 6px} h2{font-size:14px;color:#8b949e;font-weight:600;margin:20px 0 10px;text-transform:uppercase;letter-spacing:.05em}
-.sub{color:#8b949e;font-size:12px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:16px 0}
-.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px}
-.kpi .v{font-size:21px;font-weight:700}.kpi .l{font-size:11px;color:#8b949e;margin-top:2px}
-.pos{color:#3fb950}.neg{color:#f85149}.warn{color:#d29922}
-.section{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:16px}
-table{width:100%;border-collapse:collapse;font-size:13px} td,th{padding:5px 8px;text-align:left;border-bottom:1px solid #21262d} th{color:#8b949e;font-weight:600}
-.tag-core{color:#58a6ff}.tag-etf{color:#d2a8ff}.tag-scraped{color:#d29922}.tag-crypto{color:#f0883e}
-.note{color:#8b949e;font-size:11px;margin-top:8px;line-height:1.6}
-.bar{height:10px;border-radius:5px;display:inline-block;vertical-align:middle}
-input,select{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:6px 8px;font-size:13px;width:110px}
-label{font-size:12px;color:#8b949e;display:block;margin-bottom:3px}
-button{background:#238636;color:#fff;border:0;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer}
-.rbtn{background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer}
-.rbtn.on{background:#238636;border-color:#238636;color:#fff}
-svg text{fill:#8b949e;font-size:10px}
-p{line-height:1.65;font-size:14px}
-footer{color:#484f58;font-size:11px;padding:20px;text-align:center;line-height:1.6}
-</style></head><body>
-<nav><b>StockTradingLol</b>
-<a href="index.html" class="">Performance</a>
-<a href="montecarlo.html" class="">Projections</a>
-<a href="about.html" class="on">About the bot</a></nav><div class="wrap"><h1>What this bot is</h1>
-<div class='section'><p>
-StockTradingLol is a fully-automated systematic trading bot written in C#. Once per trading day, at noon
-Eastern, it scores a universe of ~2,500 liquid US stocks and a basket of 31 multi-asset ETFs, decides a
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stockbot &mdash; Methodology</title><style>:root{--paper:#f3f5f2;--card:#fbfcfa;--line:#cfd7cf;--line2:#e2e7e1;
+--text:#1d2523;--muted:#5c6b65;--faint:#93a09a;
+--accent:#2e8577;--accent-soft:#2e857722;
+--gain:#2f7d4f;--loss:#b04a3a;--warn:#a87b2c;}@media (prefers-color-scheme:dark){:root{--paper:#101514;--card:#171d1c;--line:#2c3733;--line2:#212a27;
+--text:#d9e2de;--muted:#8fa09a;--faint:#5f6f69;
+--accent:#54b3a2;--accent-soft:#54b3a222;
+--gain:#5cb87e;--loss:#e07a63;--warn:#d3a44e;}}:root[data-theme="light"]{--paper:#f3f5f2;--card:#fbfcfa;--line:#cfd7cf;--line2:#e2e7e1;
+--text:#1d2523;--muted:#5c6b65;--faint:#93a09a;
+--accent:#2e8577;--accent-soft:#2e857722;
+--gain:#2f7d4f;--loss:#b04a3a;--warn:#a87b2c;}:root[data-theme="dark"]{--paper:#101514;--card:#171d1c;--line:#2c3733;--line2:#212a27;
+--text:#d9e2de;--muted:#8fa09a;--faint:#5f6f69;
+--accent:#54b3a2;--accent-soft:#54b3a222;
+--gain:#5cb87e;--loss:#e07a63;--warn:#d3a44e;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--text);font:15px/1.6 system-ui,"Segoe UI",Arial,sans-serif}
+.serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+.mono,td.num,.ledger .v{font-family:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+header{border-bottom:1px solid var(--line);background:var(--card)}
+.head{display:flex;align-items:baseline;gap:26px;padding:16px 22px;flex-wrap:wrap}
+.wordmark{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:21px;font-weight:600;letter-spacing:.01em;color:var(--text)}
+.tagline{font-size:11.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.head nav{margin-left:auto;display:flex;gap:18px;align-items:baseline}
+.head nav a{color:var(--muted);text-decoration:none;font-size:13.5px;padding-bottom:2px;border-bottom:2px solid transparent}
+.head nav a.on{color:var(--text);border-bottom-color:var(--accent)}
+.head nav a:hover{color:var(--text)}
+.tbtn{background:none;border:1px solid var(--line);border-radius:2px;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 9px;line-height:1.5}
+.tbtn:hover{color:var(--text);border-color:var(--muted)}
+h1{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:27px;font-weight:600;margin:30px 0 4px;text-wrap:balance}
+h2{font-size:12px;color:var(--muted);font-weight:600;margin:0 0 14px;text-transform:uppercase;letter-spacing:.09em}
+.sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.pill{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--line);border-radius:2px;padding:1px 7px;color:var(--muted);vertical-align:2px;margin-left:8px}
+.pill.paper{color:var(--warn);border-color:var(--warn)}
+.ledger{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1px solid var(--line);border-radius:2px;background:var(--card);margin:18px 0 26px}
+.ledger>div{padding:13px 16px 11px;border-left:1px solid var(--line2)}
+.ledger>div:first-child{border-left:0}
+.ledger .v{font-size:21px;font-weight:600}
+.ledger .l{font-size:10.5px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.07em}
+.pos{color:var(--gain)}.neg{color:var(--loss)}.warn{color:var(--warn)}
+.panel{border:1px solid var(--line);border-radius:2px;background:var(--card);padding:18px 20px;margin:0 0 22px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+td,th{padding:6px 10px;text-align:left;border-bottom:1px solid var(--line2)}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+td.num,th.num{text-align:right}
+tr:last-child td{border-bottom:0}
+.tag-core{color:var(--accent)}.tag-etf{color:var(--muted)}.tag-scraped{color:var(--warn)}.tag-crypto{color:var(--loss)}
+.note{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.65}
+.stack{display:flex;height:14px;border-radius:2px;overflow:hidden;margin:6px 0 14px;background:var(--line2)}
+.rbtns{display:flex;gap:6px;margin:2px 0 12px;flex-wrap:wrap}
+.rbtn{background:none;color:var(--muted);border:1px solid var(--line);border-radius:2px;padding:3px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.rbtn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+input,select{background:var(--paper);color:var(--text);border:1px solid var(--line);border-radius:2px;padding:6px 8px;font-size:13px;width:110px;font-family:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace}
+label{font-size:11px;color:var(--muted);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em}
+button.go{background:var(--accent);color:var(--paper);border:0;border-radius:2px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer}
+button.go:hover{filter:brightness(1.08)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+p{line-height:1.7;font-size:14.5px;max-width:68ch}
+.status{font-family:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;font-size:12.5px;color:var(--muted);line-height:1.9;word-break:break-word}
+.status b{color:var(--text);font-weight:600}
+footer{color:var(--faint);font-size:11.5px;padding:26px 22px 34px;text-align:center;line-height:1.7;border-top:1px solid var(--line);margin-top:34px}
+canvas{display:block;width:100%}</style><script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+function flipTheme(){
+ var r=document.documentElement;
+ var cur=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+ var nx=cur==='dark'?'light':'dark';
+ r.setAttribute('data-theme',nx);localStorage.setItem('theme',nx);
+ if(window.onThemeChange)window.onThemeChange();
+}
+function tok(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}</script></head><body><header><div class="head"><span><span class="wordmark">Stockbot</span> <span class="tagline">systematic multi-asset program</span></span><nav><a href="index.html">Performance</a><a href="montecarlo.html">Projections</a><a href="about.html" class="on">Methodology</a><button class="tbtn" onclick="flipTheme()" title="Toggle light/dark">&#9681;</button></nav></div></header><div class="wrap"><h1>What this program is</h1>
+<div class='panel'><p>
+Stockbot is a fully-automated systematic trading program written in C#. Once per trading day, just after
+the open (09:32 Eastern), it scores a universe of ~2,500 liquid US stocks and a basket of 31 multi-asset ETFs, decides a
 target portfolio, and rebalances a paper (simulated) brokerage account through the Alpaca API.
 No human touches the trades.</p>
 <p>The book runs as <b>independent sleeves</b> that diversify each other:</p>
-<table>
+<div class='scroll'><table>
 <tr><th>sleeve</th><th>what it does</th></tr>
-<tr><td class='tag-core'>equity momentum core</td><td>a genetic-algorithm-optimized ensemble of 3 momentum scorers picks ~10-15 liquid stocks with persistent, high-quality trends; rebalances monthly</td></tr>
+<tr><td class='tag-core'>equity momentum core</td><td>a genetic-algorithm-optimized ensemble of 3 momentum scorers picks ~10&ndash;15 liquid stocks with persistent, high-quality trends; rebalances monthly</td></tr>
 <tr><td class='tag-etf'>ETF dual-momentum</td><td>rotates a 31-ETF multi-asset basket (equities, bonds, gold, commodities, inverse indices) by relative + absolute momentum; parks in T-bills when nothing trends</td></tr>
 <tr><td class='tag-crypto'>BTC trend</td><td>a small Bitcoin sleeve (via spot ETF) held only while BTC's own trend is positive, sized down when volatile</td></tr>
 <tr><td class='tag-scraped'>scraped overlay</td><td>a bounded slice for fresh breakout candidates scraped daily from public screeners</td></tr>
-</table>
+<tr><td class='tag-core'>defined-risk options</td><td>sells one small S&amp;P index (XSP) put credit spread at a time, entered 75&ndash;90 days out, risk capped by the long leg; exits mechanically at a profit target, a stop, or 21 days to expiry</td></tr>
+</table></div>
 <p>Capital is split between sleeves by <b>inverse volatility</b> (risk parity), and several independent risk
-layers - a market-regime filter, a crash-aware de-risker, a volatility target, a drawdown damper and a hard
-circuit breaker - can each pull the book toward cash. Un-deployed capital earns T-bill yield.</p></div>
+layers &mdash; a market-regime filter, a crash-aware de-risker, a volatility target, a drawdown damper and a hard
+circuit breaker &mdash; can each pull the book toward cash. Un-deployed capital earns T-bill yield.</p>
+<p>Every order also passes an automated <b>compliance gate</b> that classifies the instrument (equity, ETF,
+index option, &hellip;) and blocks anything outside the pre-approved set &mdash; unknown instruments fail closed.</p></div>
+
+<h1>Machine-learned self-improvement</h1>
+<div class='panel'><p>
+A <b>meta-labeling</b> layer retrains itself monthly: a logistic model reads the market regime (recent returns,
+volatility ratios, trend, drawdown) and predicts whether tomorrow is a day the strategy tends to win. Its only
+power is to <b>cut position size in half</b> on the worst-looking days &mdash; it can never add exposure.</p>
+<p>It is held to a pre-registered bar: purged, embargoed walk-forward cross-validation on the strategy's own
+out-of-sample record, requiring AUC &ge; 0.52. <b>As of its latest monthly retrain the model failed that bar and
+is therefore inactive</b> &mdash; it logs its opinion every day but touches nothing. If a future regime makes the
+features informative, it re-arms itself; until then, shipping the honest negative is the point. We do not tune
+features until a gate passes &mdash; that is how selection bias is born.</p>
+<p>A second model learns an easier lesson from the first one's failure: instead of predicting <i>direction</i>
+(the hardest target in finance), a <b>volatility forecaster</b> predicts how rough the next month will be &mdash;
+volatility clusters, so this is genuinely learnable. It regresses forward one-month volatility on trailing
+volatility at three horizons plus <b>cross-asset stress signals</b> (credit spreads, treasuries, the dollar)
+that are not derived from the index itself. When it sees volatility rising faster than the trailing estimate
+has noticed, it can trim exposure early &mdash; never below half, never adding. It must pass <b>two</b>
+pre-registered gates before it touches anything: beat the naive forecast by 5%+ in purged walk-forward
+cross-validation, <i>and</i> beat it again across 60+ days of live shadow predictions logged before arming.
+It retrains monthly and disarms itself if its live accuracy degrades.</p></div>
 
 <h1>How it's validated</h1>
-<div class='section'><p>
+<div class='panel'><p>
 Every change to the strategy has to survive an honest gauntlet before it ships:</p>
-<table>
+<div class='scroll'><table>
 <tr><th>check</th><th>what it prevents</th></tr>
-<tr><td>walk-forward out-of-sample testing</td><td>each period is traded by a model optimized ONLY on data before it - no peeking</td></tr>
+<tr><td>walk-forward out-of-sample testing</td><td>each period is traded by a model optimized ONLY on data before it &mdash; no peeking</td></tr>
 <tr><td>multi-seed re-optimization A/B</td><td>a change must beat its control across many optimizer seeds, not in one lucky fit</td></tr>
 <tr><td>deflated Sharpe + block-bootstrap</td><td>corrects for "we tried many things and kept the best" selection bias</td></tr>
 <tr><td>deploy gates (WFE + alpha vs QQQ)</td><td>a new champion is auto-rejected unless it generalizes AND adds skill over beta</td></tr>
-<tr><td>parameter plateau checks</td><td>a config only ships if its neighbors also work - knife-edge settings are luck</td></tr>
-</table>
+<tr><td>parameter plateau checks</td><td>a config only ships if its neighbors also work &mdash; knife-edge settings are luck</td></tr>
+</table></div>
 <p>Ideas that failed these tests were dropped, and the failures are documented as carefully as the wins:
 leverage (all forms), tighter trailing stops, trend filters, residual momentum, a jump-risk "quality" filter,
-and a tail-put hedge all looked good somewhere and died out-of-sample.</p></div>
+a mean-reversion sleeve, the ML sizing gate above, and a tail-put hedge all looked good somewhere and died
+out-of-sample.</p></div>
 
 <h1>Honest numbers &amp; caveats</h1>
-<div class='section'>
-<table>
-<tr><th>metric (validated, out-of-sample)</th><th>value</th></tr>
-<tr><td>equity book OOS Sharpe (excess, walk-forward 2020-2026)</td><td>~0.72</td></tr>
-<tr><td>blended book (with sleeves + risk-parity split, same window)</td><td>~0.9-1.0</td></tr>
-<tr><td>OOS CAGR (blend, same window)</td><td>~19-20%</td></tr>
-<tr><td>max drawdown (blend, same window)</td><td>~-16%</td></tr>
-</table>
+<div class='panel'>
+<div class='scroll'><table>
+<tr><th>metric (validated, out-of-sample)</th><th class='num'>value</th></tr>
+<tr><td>equity book OOS Sharpe (excess, walk-forward 2020&ndash;2026)</td><td class='num'>~0.72</td></tr>
+<tr><td>blended book (with sleeves + risk-parity split, same window)</td><td class='num'>~0.9&ndash;1.0</td></tr>
+<tr><td>OOS CAGR (blend, same window)</td><td class='num'>~19&ndash;20%</td></tr>
+<tr><td>max drawdown (blend, same window)</td><td class='num'>~&minus;16%</td></tr>
+</table></div>
 <p><b>Caveats we measured ourselves:</b> the stock universe is built from today's listings, and we measured
 that this survivorship / membership-hindsight bias inflates backtest Sharpe by roughly 0.35 on an S&amp;P-500
-subset - so the true forward numbers are likely lower than the table above. The account is currently
+subset &mdash; so the true forward numbers are likely lower than the table above. The account is currently
 a PAPER account: fills are simulated, so live slippage will differ. Returns are volatile,
-drawdowns of 15-20%+ are expected, and none of this is investment advice.</p></div></div><footer>Generated 2026-07-03 16:02 UTC &middot; PAPER trading account (simulated fills, real market data) &middot;
+drawdowns of 15&ndash;20%+ are expected, and none of this is investment advice.</p></div></div><footer>Generated 2026-08-19 00:11 UTC &middot; PAPER trading account (simulated fills, real market data) &middot;
+equity curve = the broker's end-of-day account equity &middot;
 Nothing on this site is investment advice. Past and simulated performance do not guarantee future results.</footer></body></html>
